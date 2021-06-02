@@ -59,12 +59,20 @@ namespace FlaUInspect.Core
 
         protected virtual void OnPropertyChanged<T>(Expression<Func<T>> selectorExpression)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(GetNameFromExpression(selectorExpression)));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(GetNameFromExpression(selectorExpression)));
+            }
+            catch { }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            catch { }
         }
 
         private bool IsEqual<T>(T field, T newValue)

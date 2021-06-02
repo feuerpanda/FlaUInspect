@@ -21,6 +21,15 @@
             <Setter Property="IsReadOnly" Value="True" />
         </Style>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ContextMenu x:Key="ElementContextMenu" d:DataContext="{d:DesignInstance Type={x:Type viewModels:ElementViewModel}}">
+            <MenuItem Header="Highlight" Command="{Binding HighlightCommand}" />
+            <Separator />
+            <MenuItem Header="Focus" Command="{Binding FocusCommand}"/>
+            <Separator />
+            <MenuItem Header="Click" Command="{Binding ClickCommand}"/>
+            <MenuItem Header="Double Click" Command="{Binding DoubleClickCommand}"/>
+            <MenuItem Header="Right Click" Command="{Binding RightClickCommand}"/>
+        </ContextMenu>
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
@@ -102,6 +111,7 @@
                     <TreeView ItemsSource="{Binding Elements}">
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ElementContextMenu}"/>
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                                 <Setter Property="FontWeight" Value="Normal" />

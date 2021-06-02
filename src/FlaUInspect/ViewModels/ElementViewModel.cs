@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Conditions;
@@ -25,10 +26,49 @@ namespace FlaUInspect.ViewModels
             AutomationElement = automationElement;
             Children = new ExtendedObservableCollection<ElementViewModel>();
             ItemDetails = new ExtendedObservableCollection<DetailGroupViewModel>();
+            HighlightCommand = new RelayCommand(_ => ElementHighlighter.HighlightElement(AutomationElement));
+            FocusCommand = new RelayCommand(_ =>
+            {
+                try
+                {
+                    AutomationElement.Focus();
+                }
+                catch { }
+            });
+            ClickCommand = new RelayCommand(_ =>
+            {
+                try
+                {
+                    AutomationElement.Click();
+                }
+                catch { }
+            });
+            DoubleClickCommand = new RelayCommand(_ =>
+            {
+                try
+                {
+                    AutomationElement.DoubleClick();
+                }
+                catch { }
+            });
+            RightClickCommand = new RelayCommand(_ =>
+            {
+                try
+                {
+                    AutomationElement.RightClick();
+                }
+                catch { }
+            });
         }
 
         public AutomationElement AutomationElement { get; }
         public MainViewModel MainViewModel { get; set; }
+
+        public ICommand HighlightCommand { get; }
+        public ICommand FocusCommand { get; }
+        public ICommand ClickCommand { get; }
+        public ICommand DoubleClickCommand { get; }
+        public ICommand RightClickCommand { get; }
 
         public bool IsSelected
         {
@@ -39,7 +79,7 @@ namespace FlaUInspect.ViewModels
                 {
                     if (value)
                     {
-                        if(MainViewModel.EnableHighlightOnSelectionChanged)
+                        if (MainViewModel.EnableHighlightOnSelectionChanged)
                             ElementHighlighter.HighlightElement(AutomationElement);
 
                         // Async load details
@@ -92,7 +132,20 @@ namespace FlaUInspect.ViewModels
 
         public ExtendedObservableCollection<DetailGroupViewModel> ItemDetails { get; set; }
 
-        public string XPath => Debug.GetXPathToElement(AutomationElement);
+        public string XPath
+        {
+            get
+            {
+                try
+                {
+                    return Debug.GetXPathToElement(AutomationElement);
+                }
+                catch
+                {
+                    return "- Error -";
+                }
+            }
+        }
 
         public void LoadChildren(bool loadInnerChildren)
         {

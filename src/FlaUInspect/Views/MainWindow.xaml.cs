@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using FlaUInspect.Core;
 using FlaUInspect.ViewModels;
 
 namespace FlaUInspect.Views

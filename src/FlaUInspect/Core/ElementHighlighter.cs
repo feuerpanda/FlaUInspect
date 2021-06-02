@@ -8,7 +8,7 @@ namespace FlaUInspect.Core
 {
     public static class ElementHighlighter
     {
-        public static void HighlightElement(AutomationElement automationElement)
+        public static void HighlightElement(AutomationElement automationElement, TimeSpan? timeSpan = null)
         {
             try
             {
@@ -16,7 +16,7 @@ namespace FlaUInspect.Core
                 {
                     try
                     {
-                        automationElement.DrawHighlight(false, Color.Red, TimeSpan.FromSeconds(2));
+                        automationElement.DrawHighlight(false, Color.Red, timeSpan);
                     }
                     catch { }
                 });
