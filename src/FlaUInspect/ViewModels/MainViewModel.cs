@@ -38,8 +38,10 @@ namespace FlaUInspect.ViewModels
                     return;
                 }
                 var capturedImage = SelectedItemInTree.AutomationElement.Capture();
-                var saveDialog = new SaveFileDialog();
-                saveDialog.Filter = "Png file (*.png)|*.png";
+                var saveDialog = new SaveFileDialog
+                {
+                    Filter = "Png file (*.png)|*.png"
+                };
                 if (saveDialog.ShowDialog() == true)
                 {
                     capturedImage.Save(saveDialog.FileName, ImageFormat.Png);
@@ -50,6 +52,7 @@ namespace FlaUInspect.ViewModels
             SwitchHoverModeCommand = new RelayCommand(_ => EnableHoverMode = !EnableHoverMode);
             SwitchFocusModeCommand = new RelayCommand(_ => EnableFocusTrackingMode = !EnableFocusTrackingMode);
             SwitchXPathModeCommand = new RelayCommand(_ => EnableXPath = !EnableXPath);
+
             EnableXPath = true;
         }
 
@@ -85,6 +88,12 @@ namespace FlaUInspect.ViewModels
             }
         }
 
+        public bool EnableHighlightOnSelectionChanged
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
         public bool EnableXPath
         {
             get { return GetProperty<bool>(); }
@@ -97,17 +106,17 @@ namespace FlaUInspect.ViewModels
             private set { SetProperty(value); }
         }
 
-        public ObservableCollection<ElementViewModel> Elements { get; private set; }
+        public ObservableCollection<ElementViewModel> Elements { get; }
 
-        public ICommand StartNewInstanceCommand { get; private set; }
+        public ICommand StartNewInstanceCommand { get; }
 
-        public ICommand CaptureSelectedItemCommand { get; private set; }
+        public ICommand CaptureSelectedItemCommand { get; }
 
-        public ICommand RefreshCommand { get; private set; }
+        public ICommand RefreshCommand { get; }
 
-        public ICommand SwitchHoverModeCommand { get; private set; }
-        public ICommand SwitchFocusModeCommand { get; private set; }
-        public ICommand SwitchXPathModeCommand { get; private set; }
+        public ICommand SwitchHoverModeCommand { get; }
+        public ICommand SwitchFocusModeCommand { get; }
+        public ICommand SwitchXPathModeCommand { get; }
 
         public ObservableCollection<DetailGroupViewModel> SelectedItemDetails => SelectedItemInTree?.ItemDetails;
 
@@ -124,7 +133,7 @@ namespace FlaUInspect.ViewModels
 
             _automation = selectedAutomationType == AutomationType.UIA2 ? (AutomationBase)new UIA2Automation() : new UIA3Automation();
             _rootElement = _automation.GetDesktop();
-            var desktopViewModel = new ElementViewModel(_rootElement);
+            var desktopViewModel = new ElementViewModel(_rootElement, this);
             desktopViewModel.SelectionChanged += DesktopViewModel_SelectionChanged;
             desktopViewModel.LoadChildren(false);
             Elements.Add(desktopViewModel);

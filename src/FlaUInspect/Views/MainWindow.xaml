@@ -43,6 +43,7 @@
                 <MenuItem Header="_Mode">
                     <MenuItem Header="H_over Mode (use Ctrl)" IsCheckable="True" IsChecked="{Binding EnableHoverMode}"  InputGestureText="F2"/>
                     <MenuItem Header="_Focus Tracking" IsCheckable="True" IsChecked="{Binding EnableFocusTrackingMode}" InputGestureText="Shift+F2"/>
+                    <MenuItem Header="Highlight on _selection" IsCheckable="True" IsChecked="{Binding EnableHighlightOnSelectionChanged}"/>
                     <MenuItem Header="Show _XPath" IsCheckable="True" IsChecked="{Binding EnableXPath}" InputGestureText="F3"/>
                 </MenuItem>
             </Menu>
@@ -67,9 +68,27 @@
                     </StackPanel>
                 </StatusBarItem>
                 <StatusBarItem HorizontalAlignment="Right">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="H" Background="{Binding EnableHoverMode, Converter={conv:BoolToBrushConverter TrueValue=LawnGreen}}"/>
-                        <Label Content="F" Background="{Binding EnableFocusTrackingMode, Converter={conv:BoolToBrushConverter TrueValue=LawnGreen}}"/>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Stretch"
+                                Margin="0,0,20,0">
+                        <ToggleButton IsChecked="{Binding EnableHoverMode}" 
+                                      BorderThickness="0"
+                                      Padding="8,2"
+                                      Content="H" 
+                                      ToolTip="Hover mode"
+                                      Background="{Binding EnableHoverMode, Converter={conv:BoolToBrushConverter TrueValue=LawnGreen}}"/>
+                        <ToggleButton IsChecked="{Binding EnableFocusTrackingMode}" 
+                                      BorderThickness="0"
+                                      Padding="8,2"
+                                      Content="F" 
+                                      ToolTip="Focus mode"
+                                      Background="{Binding EnableFocusTrackingMode, Converter={conv:BoolToBrushConverter TrueValue=LawnGreen}}"/>
+                       <ToggleButton IsChecked="{Binding EnableHighlightOnSelectionChanged}" 
+                                      BorderThickness="0"
+                                      Padding="8,2"
+                                      Content="S"
+                                      Background="{Binding EnableFocusTrackingMode, Converter={conv:BoolToBrushConverter TrueValue=LawnGreen}}"
+                                      ToolTip="Highlight on selection mode"/>
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>

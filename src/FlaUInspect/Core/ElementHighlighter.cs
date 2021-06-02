@@ -16,7 +16,7 @@ namespace FlaUInspect.Core
                 {
                     try
                     {
-                        automationElement.DrawHighlight(false, Color.Red, TimeSpan.FromSeconds(1));
+                        automationElement.DrawHighlight(false, Color.Red, TimeSpan.FromSeconds(2));
                     }
                     catch { }
                 });

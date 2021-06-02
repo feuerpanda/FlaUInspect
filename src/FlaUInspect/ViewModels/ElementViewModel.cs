@@ -19,14 +19,16 @@ namespace FlaUInspect.ViewModels
     {
         public event Action<ElementViewModel> SelectionChanged;
 
-        public ElementViewModel(AutomationElement automationElement)
+        public ElementViewModel(AutomationElement automationElement, MainViewModel mainViewModel)
         {
+            MainViewModel = mainViewModel;
             AutomationElement = automationElement;
             Children = new ExtendedObservableCollection<ElementViewModel>();
             ItemDetails = new ExtendedObservableCollection<DetailGroupViewModel>();
         }
 
         public AutomationElement AutomationElement { get; }
+        public MainViewModel MainViewModel { get; set; }
 
         public bool IsSelected
         {
@@ -37,7 +39,8 @@ namespace FlaUInspect.ViewModels
                 {
                     if (value)
                     {
-                        ElementHighlighter.HighlightElement(AutomationElement);
+                        if(MainViewModel.EnableHighlightOnSelectionChanged)
+                            ElementHighlighter.HighlightElement(AutomationElement);
 
                         // Async load details
                         var unused = Task.Run(() =>
@@ -46,12 +49,9 @@ namespace FlaUInspect.ViewModels
                             return details;
                         }).ContinueWith(items =>
                         {
-                            if (items.IsFaulted)
+                            if (items.IsFaulted && items.Exception != null)
                             {
-                                if (items.Exception != null)
-                                {
-                                    MessageBox.Show(items.Exception.ToString());
-                                }
+                                MessageBox.Show(items.Exception.ToString());
                             }
                             ItemDetails.Reset(items.Result);
                         }, TaskScheduler.FromCurrentSynchronizationContext());
@@ -106,7 +106,7 @@ namespace FlaUInspect.ViewModels
             {
                 foreach (var child in AutomationElement.FindAllChildren())
                 {
-                    var childViewModel = new ElementViewModel(child);
+                    var childViewModel = new ElementViewModel(child, MainViewModel);
                     childViewModel.SelectionChanged += SelectionChanged;
                     childrenViewModels.Add(childViewModel);
 
@@ -127,8 +127,10 @@ namespace FlaUInspect.ViewModels
         private List<DetailGroupViewModel> LoadDetails()
         {
             var detailGroups = new List<DetailGroupViewModel>();
-            var cacheRequest = new CacheRequest();
-            cacheRequest.TreeScope = TreeScope.Element;
+            var cacheRequest = new CacheRequest
+            {
+                TreeScope = TreeScope.Element
+            };
             cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.AutomationId);
             cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.Name);
             cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.ClassName);
@@ -173,7 +175,7 @@ namespace FlaUInspect.ViewModels
                     // Special handling for NativeWindowHandle
                     var nativeWindowHandle = elementCached.Properties.NativeWindowHandle.ValueOrDefault;
                     var nativeWindowHandleString = "Not Supported";
-                    if (nativeWindowHandle != default(IntPtr))
+                    if (nativeWindowHandle != default)
                     {
                         nativeWindowHandleString = String.Format("{0} ({0:X8})", nativeWindowHandle.ToInt32());
                     }
@@ -323,26 +325,11 @@ namespace FlaUInspect.ViewModels
                     ? System.Windows.Automation.TextPattern.MixedAttributeValue
                     : ((FlaUI.UIA3.UIA3Automation)AutomationElement.Automation).NativeAutomation.ReservedMixedAttributeValue;
 
-                var foreColor = GetTextAttribute<int>(pattern, TextAttributes.ForegroundColor, mixedValue, (x) =>
-                {
-                    return $"{System.Drawing.Color.FromArgb(x)} ({x})";
-                });
-                var backColor = GetTextAttribute<int>(pattern, TextAttributes.BackgroundColor, mixedValue, (x) =>
-                {
-                    return $"{System.Drawing.Color.FromArgb(x)} ({x})";
-                });
-                var fontName = GetTextAttribute<string>(pattern, TextAttributes.FontName, mixedValue, (x) =>
-                {
-                    return $"{x}";
-                });
-                var fontSize = GetTextAttribute<double>(pattern, TextAttributes.FontSize, mixedValue, (x) =>
-                {
-                    return $"{x}";
-                });
-                var fontWeight = GetTextAttribute<int>(pattern, TextAttributes.FontWeight, mixedValue, (x) =>
-                {
-                    return $"{x}";
-                });
+                var foreColor = GetTextAttribute<int>(pattern, TextAttributes.ForegroundColor, mixedValue, (x) => $"{System.Drawing.Color.FromArgb(x)} ({x})");
+                var backColor = GetTextAttribute<int>(pattern, TextAttributes.BackgroundColor, mixedValue, (x) => $"{System.Drawing.Color.FromArgb(x)} ({x})");
+                var fontName = GetTextAttribute<string>(pattern, TextAttributes.FontName, mixedValue, (x) => $"{x}");
+                var fontSize = GetTextAttribute<double>(pattern, TextAttributes.FontSize, mixedValue, (x) => $"{x}");
+                var fontWeight = GetTextAttribute<int>(pattern, TextAttributes.FontWeight, mixedValue, (x) => $"{x}");
 
                 var patternDetails = new List<DetailViewModel>
                 {
