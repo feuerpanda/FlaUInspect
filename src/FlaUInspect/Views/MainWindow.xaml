@@ -4,10 +4,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
+        xmlns:conv="clr-namespace:FlaUInspect.Converters"
         xmlns:models="clr-namespace:FlaUInspect.Models"
         xmlns:flauidef="clr-namespace:FlaUI.Core.Definitions;assembly=FlaUI.Core"
         xmlns:viewModels="clr-namespace:FlaUInspect.ViewModels"
-        Title="FlaUInspect" d:DesignHeight="350" d:DesignWidth="500" d:LayoutOverrides="Width, Height" ResizeMode="CanResizeWithGrip">
+        Title="FlaUInspect" 
+        d:DesignHeight="350" 
+        d:DesignWidth="500" 
+        d:LayoutOverrides="Width, Height" 
+        ResizeMode="CanResizeWithGrip"
+        d:DataContext="{d:DesignInstance Type={x:Type viewModels:MainViewModel}}">
     <Window.Resources>
         <Style x:Key="SelectableLabel" TargetType="{x:Type TextBox}">
             <Setter Property="Background" Value="Transparent" />
@@ -18,21 +24,26 @@
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="N" Command="{Binding StartNewInstanceCommand}"/>
+        <KeyBinding Key="F4" Command="{Binding CaptureSelectedItemCommand}"/>
+        <KeyBinding Key="F2" Command="{Binding SwitchHoverModeCommand}"/>
+        <KeyBinding Modifiers="Shift" Key="F2" Command="{Binding SwitchFocusModeCommand}"/>
+        <KeyBinding Key="F3" Command="{Binding SwitchXPathModeCommand}"/>
     </Window.InputBindings>
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_New Instance" Command="{Binding StartNewInstanceCommand}" />
-                    <MenuItem Header="_Capture selected item" Command="{Binding CaptureSelectedItemCommand}" />
+                    <MenuItem Header="_New Instance" Command="{Binding StartNewInstanceCommand}" InputGestureText="Ctrl+N" />
+                    <MenuItem Header="_Capture selected item" Command="{Binding CaptureSelectedItemCommand}" InputGestureText="F4"/>
                     <MenuItem Header="_Refresh" Command="{Binding RefreshCommand}" InputGestureText="F5" />
                     <Separator />
                     <MenuItem Header="E_xit" Click="MenuItem_Click" />
                 </MenuItem>
                 <MenuItem Header="_Mode">
-                    <MenuItem Header="H_over Mode (use Ctrl)" IsCheckable="True" IsChecked="{Binding EnableHoverMode}" />
-                    <MenuItem Header="_Focus Tracking" IsCheckable="True" IsChecked="{Binding EnableFocusTrackingMode}" />
-                    <MenuItem Header="Show _XPath" IsCheckable="True" IsChecked="{Binding EnableXPath}" />
+                    <MenuItem Header="H_over Mode (use Ctrl)" IsCheckable="True" IsChecked="{Binding EnableHoverMode}"  InputGestureText="F2"/>
+                    <MenuItem Header="_Focus Tracking" IsCheckable="True" IsChecked="{Binding EnableFocusTrackingMode}" InputGestureText="Shift+F2"/>
+                    <MenuItem Header="Show _XPath" IsCheckable="True" IsChecked="{Binding EnableXPath}" InputGestureText="F3"/>
                 </MenuItem>
             </Menu>
             <StatusBar DockPanel.Dock="Bottom">
@@ -53,6 +64,12 @@
                                 </Style>
                             </TextBox.Style>
                         </TextBox>
+                    </StackPanel>
+                </StatusBarItem>
+                <StatusBarItem HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="H" Background="{Binding EnableHoverMode, Converter={conv:BoolToBrushConverter TrueValue=LawnGreen}}"/>
+                        <Label Content="F" Background="{Binding EnableFocusTrackingMode, Converter={conv:BoolToBrushConverter TrueValue=LawnGreen}}"/>
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>

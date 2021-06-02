@@ -43,10 +43,7 @@ namespace FlaUInspect.Core
             if (!Equals(_currentFocusedElement, automationElement))
             {
                 _currentFocusedElement = automationElement;
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ElementFocused?.Invoke(automationElement);
-                });
+                System.Windows.Application.Current?.Dispatcher?.Invoke(() => ElementFocused?.Invoke(automationElement));
             }
         }
     }

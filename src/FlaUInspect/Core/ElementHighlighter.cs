@@ -12,7 +12,14 @@ namespace FlaUInspect.Core
         {
             try
             {
-                Task.Run(() => automationElement.DrawHighlight(false, Color.Red, TimeSpan.FromSeconds(1)));
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        automationElement.DrawHighlight(false, Color.Red, TimeSpan.FromSeconds(1));
+                    }
+                    catch { }
+                });
             }
             catch (PropertyNotSupportedException ex)
             {

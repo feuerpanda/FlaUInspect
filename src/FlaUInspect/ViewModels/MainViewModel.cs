@@ -26,12 +26,12 @@ namespace FlaUInspect.ViewModels
         public MainViewModel()
         {
             Elements = new ObservableCollection<ElementViewModel>();
-            StartNewInstanceCommand = new RelayCommand(o =>
+            StartNewInstanceCommand = new RelayCommand(_ =>
             {
                 var info = new ProcessStartInfo(Assembly.GetExecutingAssembly().Location);
                 Process.Start(info);
             });
-            CaptureSelectedItemCommand = new RelayCommand(o =>
+            CaptureSelectedItemCommand = new RelayCommand(_ =>
             {
                 if (SelectedItemInTree == null)
                 {
@@ -46,10 +46,11 @@ namespace FlaUInspect.ViewModels
                 }
                 capturedImage.Dispose();
             });
-            RefreshCommand = new RelayCommand(o =>
-            {
-                RefreshTree();
-            });
+            RefreshCommand = new RelayCommand(_ => RefreshTree());
+            SwitchHoverModeCommand = new RelayCommand(_ => EnableHoverMode = !EnableHoverMode);
+            SwitchFocusModeCommand = new RelayCommand(_ => EnableFocusTrackingMode = !EnableFocusTrackingMode);
+            SwitchXPathModeCommand = new RelayCommand(_ => EnableXPath = !EnableXPath);
+            EnableXPath = true;
         }
 
         public bool IsInitialized
@@ -103,6 +104,10 @@ namespace FlaUInspect.ViewModels
         public ICommand CaptureSelectedItemCommand { get; private set; }
 
         public ICommand RefreshCommand { get; private set; }
+
+        public ICommand SwitchHoverModeCommand { get; private set; }
+        public ICommand SwitchFocusModeCommand { get; private set; }
+        public ICommand SwitchXPathModeCommand { get; private set; }
 
         public ObservableCollection<DetailGroupViewModel> SelectedItemDetails => SelectedItemInTree?.ItemDetails;
 
