@@ -16,8 +16,8 @@ namespace FlaUInspect.Views
         {
             InitializeComponent();
             AppendVersionToTitle();
-            Height = 550;
-            Width = 700;
+            Height = 600;
+            Width = 800;
             Loaded += MainWindow_Loaded;
             _vm = new MainViewModel();
             DataContext = _vm;

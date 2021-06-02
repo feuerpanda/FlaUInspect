@@ -9,8 +9,8 @@
         xmlns:flauidef="clr-namespace:FlaUI.Core.Definitions;assembly=FlaUI.Core"
         xmlns:viewModels="clr-namespace:FlaUInspect.ViewModels"
         Title="FlaUInspect" 
-        d:DesignHeight="350" 
-        d:DesignWidth="500" 
+        d:DesignHeight="500" 
+        d:DesignWidth="800" 
         d:LayoutOverrides="Width, Height" 
         ResizeMode="CanResizeWithGrip"
         d:DataContext="{d:DesignInstance Type={x:Type viewModels:MainViewModel}}">
