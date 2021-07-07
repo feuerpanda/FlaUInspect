@@ -31,7 +31,7 @@ namespace FlaUInspect.ViewModels
                 var info = new ProcessStartInfo(Assembly.GetExecutingAssembly().Location);
                 Process.Start(info);
             });
-            CaptureSelectedItemCommand = new RelayCommand(_ =>
+            SaveCaptureSelectedItemCommand = new RelayCommand(_ =>
             {
                 if (SelectedItemInTree == null)
                 {
@@ -47,6 +47,14 @@ namespace FlaUInspect.ViewModels
                     capturedImage.Save(saveDialog.FileName, ImageFormat.Png);
                 }
                 capturedImage.Dispose();
+            });
+            CaptureSelectedItemToClipboard = new RelayCommand(_ =>
+            {
+                if (SelectedItemInTree == null)
+                {
+                    return;
+                }
+                System.Windows.Forms.Clipboard.SetImage(SelectedItemInTree.AutomationElement.Capture());
             });
             RefreshCommand = new RelayCommand(_ => RefreshTree());
             SwitchHoverModeCommand = new RelayCommand(_ => EnableHoverMode = !EnableHoverMode);
@@ -110,7 +118,9 @@ namespace FlaUInspect.ViewModels
 
         public ICommand StartNewInstanceCommand { get; }
 
-        public ICommand CaptureSelectedItemCommand { get; }
+        public ICommand SaveCaptureSelectedItemCommand { get; }
+
+        public ICommand CaptureSelectedItemToClipboard { get; }
 
         public ICommand RefreshCommand { get; }
 
