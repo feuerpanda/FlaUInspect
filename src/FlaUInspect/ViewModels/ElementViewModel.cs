@@ -91,7 +91,8 @@ namespace FlaUInspect.ViewModels
                         {
                             if (items.IsFaulted && items.Exception != null)
                             {
-                                MessageBox.Show(items.Exception.ToString());
+                                //MessageBox.Show(items.Exception.ToString());
+                                ErrorsLogsViewModel.Instance.Log(items.Exception);
                             }
                             ItemDetails.Reset(items.Result);
                         }, TaskScheduler.FromCurrentSynchronizationContext());
@@ -105,6 +106,7 @@ namespace FlaUInspect.ViewModels
                 catch (Exception ex)
                 {
                     Console.Write(ex.ToString());
+                    ErrorsLogsViewModel.Instance.Log(ex);
                 }
             }
         }

@@ -81,6 +81,8 @@
     <Compile Include="ViewModels\DetailGroupViewModel.cs" />
     <Compile Include="ViewModels\DetailViewModel.cs" />
     <Compile Include="ViewModels\ElementViewModel.cs" />
+    <Compile Include="ViewModels\ErrorLog.cs" />
+    <Compile Include="ViewModels\ErrorsLogsViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\ChooseVersionWindow.xaml.cs">
       <DependentUpon>ChooseVersionWindow.xaml</DependentUpon>

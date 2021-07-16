@@ -9,7 +9,7 @@
         xmlns:flauidef="clr-namespace:FlaUI.Core.Definitions;assembly=FlaUI.Core"
         xmlns:viewModels="clr-namespace:FlaUInspect.ViewModels"
         Title="FlaUInspect" 
-        d:DesignHeight="500" 
+        d:DesignHeight="600" 
         d:DesignWidth="800" 
         d:LayoutOverrides="Width, Height" 
         ResizeMode="CanResizeWithGrip"
@@ -103,6 +103,27 @@
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>
+            <DockPanel DockPanel.Dock="Bottom"
+                       DataContext="{Binding Source={x:Static viewModels:ErrorsLogsViewModel.Instance}}">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Visible"
+                              Height="100">
+                    <ItemsControl ItemsSource="{Binding Logs}">
+                        <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:ErrorLog}">
+                            <DockPanel>
+                                <TextBox Text="{Binding CallerName, Mode=OneWay}"
+                                         IsReadOnly="True"
+                                         TextWrapping="WrapWithOverflow" />
+                                <TextBox Text="{Binding Text, Mode=OneWay}"
+                                         IsReadOnly="True"
+                                         TextWrapping="WrapWithOverflow" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>

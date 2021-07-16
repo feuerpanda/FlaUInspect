@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
+using FlaUInspect.ViewModels;
 
 namespace FlaUInspect.Core
 {
@@ -60,15 +61,17 @@ namespace FlaUInspect.Core
                         ElementHighlighter.HighlightElement(hoveredElement);
                     }
                 }
-                catch (UnauthorizedAccessException)
+                catch (UnauthorizedAccessException ex)
                 {
                     string caption = "FlaUInspect - Unauthorized access exception";
                     string message = "You are accessing a protected UI element in hover mode.\nTry to start FlaUInspect as administrator.";
                     MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ErrorsLogsViewModel.Instance.Log(ex);
                 }
                 catch(System.IO.FileNotFoundException ex)
                 {
                     Console.WriteLine($"Exception: {ex.Message}");
+                    ErrorsLogsViewModel.Instance.Log(ex);
                 }
             }
         }
