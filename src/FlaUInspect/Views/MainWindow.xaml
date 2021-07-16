@@ -103,27 +103,29 @@
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>
-            <DockPanel DockPanel.Dock="Bottom"
+            <Grid DockPanel.Dock="Bottom"
                        DataContext="{Binding Source={x:Static viewModels:ErrorsLogsViewModel.Instance}}">
-                <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Visible"
-                              Height="100">
-                    <ItemsControl ItemsSource="{Binding Logs}">
-                        <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:ErrorLog}">
-                            <DockPanel>
-                                <TextBox Text="{Binding CallerName, Mode=OneWay}"
-                                         IsReadOnly="True"
-                                         TextWrapping="WrapWithOverflow" />
-                                <TextBox Text="{Binding Text, Mode=OneWay}"
-                                         IsReadOnly="True"
-                                         TextWrapping="WrapWithOverflow" />
-                            </DockPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                </ScrollViewer>
-            </DockPanel>
+                <GroupBox Header="Errors">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Visible"
+                                  Height="100">
+                        <ItemsControl ItemsSource="{Binding Logs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type viewModels:ErrorLog}">
+                                    <DockPanel>
+                                        <TextBox Text="{Binding CallerName, Mode=OneWay}"
+                                                 IsReadOnly="True"
+                                                 TextWrapping="WrapWithOverflow" />
+                                        <TextBox Text="{Binding Text, Mode=OneWay}"
+                                                 IsReadOnly="True"
+                                                 TextWrapping="WrapWithOverflow" />
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+            </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
