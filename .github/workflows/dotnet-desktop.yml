@@ -76,13 +76,18 @@ jobs:
       uses: microsoft/setup-msbuild@master
       with: 
         vs-prerelease: true
-        vs-version: '[17.4, )'
+    
+    - name: Build app for release
+      run: msbuild $env:Solution_Name -t:rebuild -verbosity:diag -property:Configuration=Release
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
+        
+    - name: Build app for release
+      run: msbuild $env:Solution_Name -t:rebuild -verbosity:diag -property:Configuration=Release
    
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
