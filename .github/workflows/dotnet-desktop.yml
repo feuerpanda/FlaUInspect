@@ -66,36 +66,14 @@ jobs:
       with:
         dotnet-version: 7.0.x
         include-prerelease: true
-    - name: Download build tools
-      run: Invoke-webrequest
-        -uri https://aka.ms/vs/17/pre/vs_buildtools.exe
-        -OutFile vs_buildtools.exe
-      shell: powershell
-
-    - name: Install build tools
-      run: .\vs_buildtools.exe
-        --wait
-        --norestart
-        --passive
-        --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"
-        --includeOptional
-        --includeRecommended
-        --add Microsoft.VisualStudio.Workload.MSBuildTools
-      shell: cmd
-
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.1
-      with:
-        vs-prerelease: true
-
    
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore 
+      run: dotnet restore $env:Solution_Name 
       
         
     - name: Build app for release
-      run: msbuild $env:Solution_Name -t:rebuild 
+      run: dotnet build $env:Solution_Name 
    
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
