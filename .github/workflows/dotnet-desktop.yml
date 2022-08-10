@@ -79,5 +79,11 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: MSIX Package
+        name: FlaUInspect
         path: src\FlaUInspect\bin\net7.0-windows
+    - name: Create RElease
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "FlaUInspect.zip"
+        omitBody: true
+        token: ${{ secrets.YOUR_GITHUB_TOKEN }}
