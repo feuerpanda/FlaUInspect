@@ -70,10 +70,31 @@ jobs:
       with:
         dotnet-version: 7.0.x
         include-prerelease: true
+    - name: Download build tools
+      run: Invoke-webrequest
+        -uri https://aka.ms/vs/17/pre/vs_buildtools.exe
+        -OutFile vs_buildtools.exe
+      shell: powershell
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@master
+    - name: Install build tools
+      run: .\vs_buildtools.exe
+        --wait
+        --norestart
+        --passive
+        --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"
+        --includeOptional
+        --includeRecommended
+        --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools
+        --add Microsoft.VisualStudio.Workload.MSBuildTools
+        --add Microsoft.VisualStudio.Workload.NativeDesktop
+        --add Microsoft.VisualStudio.Workload.NetCoreTools
+      shell: cmd
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        vs-prerelease: ${{ inputs.vs-prerelease }}
+
    
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
