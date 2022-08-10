@@ -81,10 +81,3 @@ jobs:
       with:
         name: FlaUInspect
         path: src\FlaUInspect\bin\net7.0-windows
-    - name: Create RElease
-      uses: ncipollo/release-action@v1
-      with:
-        name: "Dev Version"
-        artifacts: "FlaUInspect.zip"
-        omitBody: true
-        token: ${{ secrets.RELEASE_SECRET }}
