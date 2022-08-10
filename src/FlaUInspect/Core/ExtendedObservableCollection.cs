@@ -5,80 +5,85 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace FlaUInspect.Core
+namespace FlaUInspect.Core;
+
+public class ExtendedObservableCollection<T> : ObservableCollection<T>
 {
-    public class ExtendedObservableCollection<T> : ObservableCollection<T>
+    public ExtendedObservableCollection()
     {
-        public ExtendedObservableCollection()
-        {
-        }
+    }
 
-        public ExtendedObservableCollection(IEnumerable<T> collection) : base(collection)
-        {
-        }
+    public ExtendedObservableCollection(IEnumerable<T> collection) : base(collection)
+    {
+    }
 
-        public ExtendedObservableCollection(List<T> list) : base(list)
-        {
-        }
+    public ExtendedObservableCollection(List<T> list) : base(list)
+    {
+    }
 
-        public void AddRange(IEnumerable<T> range)
+    public void AddRange(IEnumerable<T> range)
+    {
+        IList<T> rangeList = range as IList<T> ?? range.ToList();
+        if (rangeList.Count == 0)
         {
-            var rangeList = range as IList<T> ?? range.ToList();
-            if (rangeList.Count == 0) { return; }
-            if (rangeList.Count == 1)
-            {
-                Add(rangeList[0]);
-                return;
-            }
-            foreach (var item in rangeList)
-            {
-                Items.Add(item);
-            }
-            OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            return;
         }
-
-        public void RemoveRange(int index, int count)
+        if (rangeList.Count == 1)
         {
-            if (count <= 0 || index >= Items.Count) { return; }
-            if (count == 1)
-            {
-                RemoveAt(index);
-                return;
-            }
-            for (var i = 0; i < count; i++)
-            {
-                Items.RemoveAt(index);
-            }
-            OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            this.Add(rangeList[0]);
+            return;
         }
-
-        public void RemoveAll(Predicate<T> match)
+        foreach (T item in rangeList)
         {
-            var removedItem = false;
-            for (var i = Items.Count - 1; i >= 0; i--)
+            this.Items.Add(item);
+        }
+        this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+        this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+        this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+    }
+
+    public void RemoveRange(int index, int count)
+    {
+        if (count <= 0 || index >= this.Items.Count)
+        {
+            return;
+        }
+        if (count == 1)
+        {
+            this.RemoveAt(index);
+            return;
+        }
+        for (int i = 0; i < count; i++)
+        {
+            this.Items.RemoveAt(index);
+        }
+        this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+        this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+        this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+    }
+
+    public void RemoveAll(Predicate<T> match)
+    {
+        bool removedItem = false;
+        for (int i = this.Items.Count - 1; i >= 0; i--)
+        {
+            if (match(this.Items[i]))
             {
-                if (match(Items[i]))
-                {
-                    Items.RemoveAt(i);
-                    removedItem = true;
-                }
-            }
-            if (removedItem)
-            {
-                OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-                OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                this.Items.RemoveAt(i);
+                removedItem = true;
             }
         }
-
-        public void Reset(IEnumerable<T> range)
+        if (removedItem)
         {
-            ClearItems();
-            AddRange(range);
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
+    }
+
+    public void Reset(IEnumerable<T> range)
+    {
+        this.ClearItems();
+        AddRange(range);
     }
 }

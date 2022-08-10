@@ -1,30 +1,31 @@
-﻿using System;
+﻿using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Exceptions;
+using System;
 using System.Drawing;
 using System.Threading.Tasks;
-using FlaUI.Core.AutomationElements;
-using FlaUI.Core.Exceptions;
 
-namespace FlaUInspect.Core
+namespace FlaUInspect.Core;
+
+public static class ElementHighlighter
 {
-    public static class ElementHighlighter
+    public static void HighlightElement(AutomationElement automationElement, TimeSpan? timeSpan = null)
     {
-        public static void HighlightElement(AutomationElement automationElement, TimeSpan? timeSpan = null)
+        try
         {
-            try
+            Task.Run(() =>
             {
-                Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        automationElement.DrawHighlight(false, Color.Red, timeSpan);
-                    }
-                    catch { }
-                });
-            }
-            catch (PropertyNotSupportedException ex)
-            {
-                Console.WriteLine($"Exception: {ex.Message}");
-            }
+                    automationElement.DrawHighlight(false, Color.Red, timeSpan);
+                }
+                catch
+                {
+                }
+            });
+        }
+        catch (PropertyNotSupportedException ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
         }
     }
 }

@@ -12,14 +12,14 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="10"/>
+                        <Setter Property="Margin" Value="10" />
                     </Style>
                 </StackPanel.Resources>
                 <Button Padding="10" Click="UIA2ButtonClick">
-                    <TextBlock TextAlignment="Center">UIA2<LineBreak/>Managed</TextBlock>
+                    <TextBlock TextAlignment="Center">UIA2<LineBreak />Managed</TextBlock>
                 </Button>
                 <Button Padding="10" Click="UIA3ButtonClick">
-                    <TextBlock TextAlignment="Center">UIA3<LineBreak/>Interop</TextBlock>
+                    <TextBlock TextAlignment="Center">UIA3<LineBreak />Interop</TextBlock>
                 </Button>
             </StackPanel>
         </StackPanel>

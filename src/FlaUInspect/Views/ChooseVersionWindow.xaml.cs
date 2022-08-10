@@ -1,30 +1,29 @@
-﻿using System.Windows;
-using FlaUI.Core;
+﻿using FlaUI.Core;
+using System.Windows;
 
-namespace FlaUInspect.Views
+namespace FlaUInspect.Views;
+
+/// <summary>
+///     Interaction logic for ChooseVersionWindow.xaml
+/// </summary>
+public partial class ChooseVersionWindow
 {
-    /// <summary>
-    /// Interaction logic for ChooseVersionWindow.xaml
-    /// </summary>
-    public partial class ChooseVersionWindow
+    public ChooseVersionWindow()
     {
-        public ChooseVersionWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public AutomationType SelectedAutomationType { get; private set; }
+    public AutomationType SelectedAutomationType { get; private set; }
 
-        private void UIA2ButtonClick(object sender, RoutedEventArgs e)
-        {
-            SelectedAutomationType = AutomationType.UIA2;
-            DialogResult = true;
-        }
+    private void UIA2ButtonClick(object sender, RoutedEventArgs e)
+    {
+        SelectedAutomationType = AutomationType.UIA2;
+        this.DialogResult = true;
+    }
 
-        private void UIA3ButtonClick(object sender, RoutedEventArgs e)
-        {
-            SelectedAutomationType = AutomationType.UIA3;
-            DialogResult = true;
-        }
+    private void UIA3ButtonClick(object sender, RoutedEventArgs e)
+    {
+        SelectedAutomationType = AutomationType.UIA3;
+        this.DialogResult = true;
     }
 }
