@@ -6,13 +6,13 @@ public class ErrorLog
 {
     public ErrorLog(string callerName, Exception exception)
     {
-        CallerName = callerName;
-        Exception = exception;
+        this.CallerName = callerName;
+        this.Exception = exception;
     }
 
     public string CallerName { get; }
 
-    public string Text => Exception.ToString();
+    public string Text => this.Exception.ToString();
 
     public Exception Exception { get; }
 }

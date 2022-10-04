@@ -15,18 +15,19 @@ public partial class MainWindow
 
     public MainWindow()
     {
-        InitializeComponent();
-        AppendVersionToTitle();
+        this.InitializeComponent();
+        this.AppendVersionToTitle();
         this.Height = 600;
         this.Width = 800;
-        Loaded += MainWindow_Loaded;
+        Loaded += this.MainWindow_Loaded;
         _vm = new MainViewModel();
         this.DataContext = _vm;
     }
 
     private void AppendVersionToTitle()
     {
-        var attr = Assembly.GetEntryAssembly().GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
+        AssemblyInformationalVersionAttribute attr =
+            Assembly.GetEntryAssembly().GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
         if (attr != null)
         {
             this.Title += " v" + attr.InformationalVersion;
@@ -37,13 +38,13 @@ public partial class MainWindow
     {
         if (!_vm.IsInitialized)
         {
-            var dlg = new ChooseVersionWindow { Owner = this };
+            ChooseVersionWindow dlg = new() { Owner = this };
             if (dlg.ShowDialog() != true)
             {
                 this.Close();
             }
             _vm.Initialize(dlg.SelectedAutomationType);
-            Loaded -= MainWindow_Loaded;
+            Loaded -= this.MainWindow_Loaded;
         }
     }
 
@@ -54,7 +55,7 @@ public partial class MainWindow
 
     private void TreeViewSelectedHandler(object sender, RoutedEventArgs e)
     {
-        var item = sender as TreeViewItem;
+        TreeViewItem item = sender as TreeViewItem;
         if (item != null)
         {
             item.BringIntoView();

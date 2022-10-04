@@ -24,46 +24,46 @@ public class ElementViewModel : ObservableObject
 {
     public ElementViewModel(AutomationElement automationElement, MainViewModel mainViewModel)
     {
-        MainViewModel = mainViewModel;
-        AutomationElement = automationElement;
-        Children = new ExtendedObservableCollection<ElementViewModel>();
-        ItemDetails = new ExtendedObservableCollection<DetailGroupViewModel>();
-        HighlightCommand = new RelayCommand(_ => ElementHighlighter.HighlightElement(AutomationElement));
-        FocusCommand = new RelayCommand(_ =>
+        this.MainViewModel = mainViewModel;
+        this.AutomationElement = automationElement;
+        this.Children = new ExtendedObservableCollection<ElementViewModel>();
+        this.ItemDetails = new ExtendedObservableCollection<DetailGroupViewModel>();
+        this.HighlightCommand = new RelayCommand(_ => ElementHighlighter.HighlightElement(this.AutomationElement));
+        this.FocusCommand = new RelayCommand(_ =>
         {
             try
             {
-                AutomationElement.Focus();
+                this.AutomationElement.Focus();
             }
             catch
             {
             }
         });
-        ClickCommand = new RelayCommand(_ =>
+        this.ClickCommand = new RelayCommand(_ =>
         {
             try
             {
-                AutomationElement.Click();
+                this.AutomationElement.Click();
             }
             catch
             {
             }
         });
-        DoubleClickCommand = new RelayCommand(_ =>
+        this.DoubleClickCommand = new RelayCommand(_ =>
         {
             try
             {
-                AutomationElement.DoubleClick();
+                this.AutomationElement.DoubleClick();
             }
             catch
             {
             }
         });
-        RightClickCommand = new RelayCommand(_ =>
+        this.RightClickCommand = new RelayCommand(_ =>
         {
             try
             {
-                AutomationElement.RightClick();
+                this.AutomationElement.RightClick();
             }
             catch
             {
@@ -89,13 +89,13 @@ public class ElementViewModel : ObservableObject
             {
                 if (value)
                 {
-                    if (MainViewModel.EnableHighlightOnSelectionChanged)
-                        ElementHighlighter.HighlightElement(AutomationElement);
+                    if (this.MainViewModel.EnableHighlightOnSelectionChanged)
+                        ElementHighlighter.HighlightElement(this.AutomationElement);
 
                     // Async load details
                     Task unused = Task.Run(() =>
                     {
-                        List<DetailGroupViewModel> details = LoadDetails();
+                        var details = this.LoadDetails();
                         return details;
                     }).ContinueWith(items =>
                     {
@@ -104,7 +104,7 @@ public class ElementViewModel : ObservableObject
                             //MessageBox.Show(items.Exception.ToString());
                             ErrorsLogsViewModel.Instance.Log(items.Exception);
                         }
-                        ItemDetails.Reset(items.Result);
+                        this.ItemDetails.Reset(items.Result);
                     }, TaskScheduler.FromCurrentSynchronizationContext());
 
                     // Fire the selection event
@@ -129,16 +129,16 @@ public class ElementViewModel : ObservableObject
             this.SetProperty(value);
             if (value)
             {
-                LoadChildren(true);
+                this.LoadChildren(true);
             }
         }
     }
 
-    public string Name => NormalizeString(AutomationElement.Properties.Name.ValueOrDefault);
+    public string Name => this.NormalizeString(this.AutomationElement.Properties.Name.ValueOrDefault);
 
-    public string AutomationId => NormalizeString(AutomationElement.Properties.AutomationId.ValueOrDefault);
+    public string AutomationId => this.NormalizeString(this.AutomationElement.Properties.AutomationId.ValueOrDefault);
 
-    public ControlType ControlType => AutomationElement.Properties.ControlType.TryGetValue(out ControlType value) ? value : ControlType.Custom;
+    public ControlType ControlType => this.AutomationElement.Properties.ControlType.TryGetValue(out ControlType value) ? value : ControlType.Custom;
 
     public ExtendedObservableCollection<ElementViewModel> Children { get; set; }
 
@@ -150,7 +150,7 @@ public class ElementViewModel : ObservableObject
         {
             try
             {
-                return Debug.GetXPathToElement(AutomationElement);
+                return Debug.GetXPathToElement(this.AutomationElement);
             }
             catch
             {
@@ -163,7 +163,7 @@ public class ElementViewModel : ObservableObject
 
     public void LoadChildren(bool loadInnerChildren)
     {
-        foreach (ElementViewModel child in Children)
+        foreach (ElementViewModel child in this.Children)
         {
             child.SelectionChanged -= SelectionChanged;
         }
@@ -171,9 +171,9 @@ public class ElementViewModel : ObservableObject
         List<ElementViewModel> childrenViewModels = new();
         try
         {
-            foreach (AutomationElement child in AutomationElement.FindAllChildren())
+            foreach (AutomationElement child in this.AutomationElement.FindAllChildren())
             {
-                var childViewModel = new ElementViewModel(child, MainViewModel);
+                ElementViewModel childViewModel = new(child, this.MainViewModel);
                 childViewModel.SelectionChanged += SelectionChanged;
                 childrenViewModels.Add(childViewModel);
 
@@ -188,32 +188,32 @@ public class ElementViewModel : ObservableObject
             Console.WriteLine($"Exception: {ex.Message}");
         }
 
-        Children.Reset(childrenViewModels);
+        this.Children.Reset(childrenViewModels);
     }
 
     private List<DetailGroupViewModel> LoadDetails()
     {
         List<DetailGroupViewModel> detailGroups = new();
-        var cacheRequest = new CacheRequest
+        CacheRequest cacheRequest = new()
         {
             TreeScope = TreeScope.Element
         };
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.AutomationId);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.Name);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.ClassName);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.ControlType);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.LocalizedControlType);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.FrameworkId);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.ProcessId);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.IsEnabled);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.IsOffscreen);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.BoundingRectangle);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.HelpText);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.IsPassword);
-        cacheRequest.Add(AutomationElement.Automation.PropertyLibrary.Element.NativeWindowHandle);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.AutomationId);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.Name);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.ClassName);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.ControlType);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.LocalizedControlType);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.FrameworkId);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.ProcessId);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.IsEnabled);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.IsOffscreen);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.BoundingRectangle);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.HelpText);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.IsPassword);
+        cacheRequest.Add(this.AutomationElement.Automation.PropertyLibrary.Element.NativeWindowHandle);
         using (cacheRequest.Activate())
         {
-            AutomationElement elementCached = AutomationElement.FindFirst(TreeScope.Element, TrueCondition.Default);
+            AutomationElement elementCached = this.AutomationElement.FindFirst(TreeScope.Element, TrueCondition.Default);
             if (elementCached != null)
             {
                 // Element identification
@@ -252,8 +252,8 @@ public class ElementViewModel : ObservableObject
         }
 
         // Pattern details
-        PatternId[] allSupportedPatterns = AutomationElement.GetSupportedPatterns();
-        PatternId[] allPatterns = AutomationElement.Automation.PatternLibrary.AllForCurrentFramework;
+        var allSupportedPatterns = this.AutomationElement.GetSupportedPatterns();
+        var allPatterns = this.AutomationElement.Automation.PatternLibrary.AllForCurrentFramework;
         List<DetailViewModel> patterns = new();
         foreach (PatternId pattern in allPatterns)
         {
@@ -263,9 +263,9 @@ public class ElementViewModel : ObservableObject
         detailGroups.Add(new DetailGroupViewModel("Pattern Support", patterns));
 
         // GridItemPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.GridItemPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.GridItemPattern))
         {
-            IGridItemPattern pattern = AutomationElement.Patterns.GridItem.Pattern;
+            IGridItemPattern pattern = this.AutomationElement.Patterns.GridItem.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("Column", pattern.Column),
@@ -277,9 +277,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("GridItem Pattern", patternDetails));
         }
         // GridPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.GridPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.GridPattern))
         {
-            IGridPattern pattern = AutomationElement.Patterns.Grid.Pattern;
+            IGridPattern pattern = this.AutomationElement.Patterns.Grid.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("ColumnCount", pattern.ColumnCount),
@@ -288,9 +288,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("Grid Pattern", patternDetails));
         }
         // LegacyIAccessiblePattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.LegacyIAccessiblePattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.LegacyIAccessiblePattern))
         {
-            ILegacyIAccessiblePattern pattern = AutomationElement.Patterns.LegacyIAccessible.Pattern;
+            ILegacyIAccessiblePattern pattern = this.AutomationElement.Patterns.LegacyIAccessible.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("Name", pattern.Name),
@@ -307,9 +307,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("LegacyIAccessible Pattern", patternDetails));
         }
         // RangeValuePattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.RangeValuePattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.RangeValuePattern))
         {
-            IRangeValuePattern pattern = AutomationElement.Patterns.RangeValue.Pattern;
+            IRangeValuePattern pattern = this.AutomationElement.Patterns.RangeValue.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("IsReadOnly", pattern.IsReadOnly),
@@ -322,9 +322,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("RangeValue Pattern", patternDetails));
         }
         // ScrollPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.ScrollPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.ScrollPattern))
         {
-            IScrollPattern pattern = AutomationElement.Patterns.Scroll.Pattern;
+            IScrollPattern pattern = this.AutomationElement.Patterns.Scroll.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("HorizontalScrollPercent", pattern.HorizontalScrollPercent),
@@ -337,9 +337,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("Scroll Pattern", patternDetails));
         }
         // SelectionItemPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.SelectionItemPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.SelectionItemPattern))
         {
-            ISelectionItemPattern pattern = AutomationElement.Patterns.SelectionItem.Pattern;
+            ISelectionItemPattern pattern = this.AutomationElement.Patterns.SelectionItem.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("IsSelected", pattern.IsSelected),
@@ -348,9 +348,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("SelectionItem Pattern", patternDetails));
         }
         // SelectionPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.SelectionPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.SelectionPattern))
         {
-            ISelectionPattern pattern = AutomationElement.Patterns.Selection.Pattern;
+            ISelectionPattern pattern = this.AutomationElement.Patterns.Selection.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("Selection", pattern.Selection),
@@ -360,9 +360,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("Selection Pattern", patternDetails));
         }
         // TableItemPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.TableItemPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.TableItemPattern))
         {
-            ITableItemPattern pattern = AutomationElement.Patterns.TableItem.Pattern;
+            ITableItemPattern pattern = this.AutomationElement.Patterns.TableItem.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("ColumnHeaderItems", pattern.ColumnHeaderItems),
@@ -371,9 +371,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("TableItem Pattern", patternDetails));
         }
         // TablePattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.TablePattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.TablePattern))
         {
-            ITablePattern pattern = AutomationElement.Patterns.Table.Pattern;
+            ITablePattern pattern = this.AutomationElement.Patterns.Table.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("ColumnHeaderItems", pattern.ColumnHeaders),
@@ -383,22 +383,22 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("Table Pattern", patternDetails));
         }
         // TextPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.TextPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.TextPattern))
         {
-            ITextPattern pattern = AutomationElement.Patterns.Text.Pattern;
+            ITextPattern pattern = this.AutomationElement.Patterns.Text.Pattern;
 
             // TODO: This can in the future be replaced with automation.MixedAttributeValue
-            object mixedValue = AutomationElement.AutomationType == AutomationType.UIA2
-            ? TextPattern.MixedAttributeValue
-            : ((UIA3Automation)AutomationElement.Automation).NativeAutomation.ReservedMixedAttributeValue;
+            object mixedValue = this.AutomationElement.AutomationType == AutomationType.UIA2
+                ? TextPattern.MixedAttributeValue
+                : ((UIA3Automation)this.AutomationElement.Automation).NativeAutomation.ReservedMixedAttributeValue;
 
-            string foreColor = GetTextAttribute<int>(pattern, TextAttributes.ForegroundColor, mixedValue, x => $"{Color.FromArgb(x)} ({x})");
-            string backColor = GetTextAttribute<int>(pattern, TextAttributes.BackgroundColor, mixedValue, x => $"{Color.FromArgb(x)} ({x})");
-            string fontName = GetTextAttribute<string>(pattern, TextAttributes.FontName, mixedValue, x => $"{x}");
-            string fontSize = GetTextAttribute<double>(pattern, TextAttributes.FontSize, mixedValue, x => $"{x}");
-            string fontWeight = GetTextAttribute<int>(pattern, TextAttributes.FontWeight, mixedValue, x => $"{x}");
+            string foreColor = this.GetTextAttribute<int>(pattern, TextAttributes.ForegroundColor, mixedValue, x => $"{Color.FromArgb(x)} ({x})");
+            string backColor = this.GetTextAttribute<int>(pattern, TextAttributes.BackgroundColor, mixedValue, x => $"{Color.FromArgb(x)} ({x})");
+            string fontName = this.GetTextAttribute<string>(pattern, TextAttributes.FontName, mixedValue, x => $"{x}");
+            string fontSize = this.GetTextAttribute<double>(pattern, TextAttributes.FontSize, mixedValue, x => $"{x}");
+            string fontWeight = this.GetTextAttribute<int>(pattern, TextAttributes.FontWeight, mixedValue, x => $"{x}");
 
-            List<DetailViewModel> patternDetails = new List<DetailViewModel>
+            var patternDetails = new List<DetailViewModel>
             {
                 new("ForeColor", foreColor),
                 new("BackgroundColor", backColor),
@@ -409,9 +409,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("Text Pattern", patternDetails));
         }
         // TogglePattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.TogglePattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.TogglePattern))
         {
-            ITogglePattern pattern = AutomationElement.Patterns.Toggle.Pattern;
+            ITogglePattern pattern = this.AutomationElement.Patterns.Toggle.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("ToggleState", pattern.ToggleState)
@@ -419,9 +419,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("Toggle Pattern", patternDetails));
         }
         // ValuePattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.ValuePattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.ValuePattern))
         {
-            IValuePattern pattern = AutomationElement.Patterns.Value.Pattern;
+            IValuePattern pattern = this.AutomationElement.Patterns.Value.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("IsReadOnly", pattern.IsReadOnly),
@@ -430,9 +430,9 @@ public class ElementViewModel : ObservableObject
             detailGroups.Add(new DetailGroupViewModel("Value Pattern", patternDetails));
         }
         // WindowPattern
-        if (allSupportedPatterns.Contains(AutomationElement.Automation.PatternLibrary.WindowPattern))
+        if (allSupportedPatterns.Contains(this.AutomationElement.Automation.PatternLibrary.WindowPattern))
         {
-            IWindowPattern pattern = AutomationElement.Patterns.Window.Pattern;
+            IWindowPattern pattern = this.AutomationElement.Patterns.Window.Pattern;
             List<DetailViewModel> patternDetails = new()
             {
                 DetailViewModel.FromAutomationProperty("IsModal", pattern.IsModal),
@@ -456,13 +456,13 @@ public class ElementViewModel : ObservableObject
         {
             return "Mixed";
         }
-        if (value == AutomationElement.Automation.NotSupportedValue)
+        if (value == this.AutomationElement.Automation.NotSupportedValue)
         {
             return "Not supported";
         }
         try
         {
-            var converted = (T)value;
+            T converted = (T)value;
             return func(converted);
         }
         catch

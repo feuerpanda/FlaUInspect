@@ -7,7 +7,7 @@ public class Element
 {
     public Element()
     {
-        Children = new List<Element>();
+        this.Children = new List<Element>();
     }
 
     public string Name { get; set; }

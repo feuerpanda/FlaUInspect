@@ -40,10 +40,10 @@ public abstract class ObservableObject : INotifyPropertyChanged
         {
             throw new ArgumentNullException(nameof(propertyName));
         }
-        if (IsEqual(GetProperty<T>(propertyName), newValue)) return false;
+        if (this.IsEqual(this.GetProperty<T>(propertyName), newValue)) return false;
 
         _backingFieldValues[propertyName] = newValue;
-        OnPropertyChanged(propertyName);
+        this.OnPropertyChanged(propertyName);
         return true;
     }
 
@@ -52,10 +52,10 @@ public abstract class ObservableObject : INotifyPropertyChanged
     /// </summary>
     protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
     {
-        if (IsEqual(field, newValue)) return false;
+        if (this.IsEqual(field, newValue)) return false;
 
         field = newValue;
-        OnPropertyChanged(propertyName);
+        this.OnPropertyChanged(propertyName);
         return true;
     }
 
@@ -63,7 +63,7 @@ public abstract class ObservableObject : INotifyPropertyChanged
     {
         try
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(GetNameFromExpression(selectorExpression)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(this.GetNameFromExpression(selectorExpression)));
         }
         catch
         {
@@ -89,7 +89,7 @@ public abstract class ObservableObject : INotifyPropertyChanged
 
     private string GetNameFromExpression<T>(Expression<Func<T>> selectorExpression)
     {
-        var body = (MemberExpression)selectorExpression.Body;
+        MemberExpression body = (MemberExpression)selectorExpression.Body;
         string propertyName = body.Member.Name;
         return propertyName;
     }

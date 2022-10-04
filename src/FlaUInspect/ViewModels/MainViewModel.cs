@@ -28,20 +28,20 @@ public class MainViewModel : ObservableObject
 
     public MainViewModel()
     {
-        Elements = new ObservableCollection<ElementViewModel>();
-        StartNewInstanceCommand = new RelayCommand(_ =>
+        this.Elements = new ObservableCollection<ElementViewModel>();
+        this.StartNewInstanceCommand = new RelayCommand(_ =>
         {
-            var info = new ProcessStartInfo(Assembly.GetExecutingAssembly().Location);
+            ProcessStartInfo info = new(Assembly.GetExecutingAssembly().Location);
             Process.Start(info);
         });
-        SaveCaptureSelectedItemCommand = new RelayCommand(_ =>
+        this.SaveCaptureSelectedItemCommand = new RelayCommand(_ =>
         {
-            if (SelectedItemInTree == null)
+            if (this.SelectedItemInTree == null)
             {
                 return;
             }
-            Bitmap capturedImage = SelectedItemInTree.AutomationElement.Capture();
-            var saveDialog = new SaveFileDialog
+            Bitmap capturedImage = this.SelectedItemInTree.AutomationElement.Capture();
+            SaveFileDialog saveDialog = new()
             {
                 Filter = "Png file (*.png)|*.png"
             };
@@ -51,20 +51,20 @@ public class MainViewModel : ObservableObject
             }
             capturedImage.Dispose();
         });
-        CaptureSelectedItemToClipboard = new RelayCommand(_ =>
+        this.CaptureSelectedItemToClipboard = new RelayCommand(_ =>
         {
-            if (SelectedItemInTree == null)
+            if (this.SelectedItemInTree == null)
             {
                 return;
             }
-            Clipboard.SetImage(SelectedItemInTree.AutomationElement.Capture());
+            Clipboard.SetImage(this.SelectedItemInTree.AutomationElement.Capture());
         });
-        RefreshCommand = new RelayCommand(_ => RefreshTree());
-        SwitchHoverModeCommand = new RelayCommand(_ => EnableHoverMode = !EnableHoverMode);
-        SwitchFocusModeCommand = new RelayCommand(_ => EnableFocusTrackingMode = !EnableFocusTrackingMode);
-        SwitchXPathModeCommand = new RelayCommand(_ => EnableXPath = !EnableXPath);
+        this.RefreshCommand = new RelayCommand(_ => this.RefreshTree());
+        this.SwitchHoverModeCommand = new RelayCommand(_ => this.EnableHoverMode = !this.EnableHoverMode);
+        this.SwitchFocusModeCommand = new RelayCommand(_ => this.EnableFocusTrackingMode = !this.EnableFocusTrackingMode);
+        this.SwitchXPathModeCommand = new RelayCommand(_ => this.EnableXPath = !this.EnableXPath);
 
-        EnableXPath = true;
+        this.EnableXPath = true;
     }
 
     public bool IsInitialized
@@ -143,7 +143,7 @@ public class MainViewModel : ObservableObject
     public ICommand SwitchFocusModeCommand { get; }
     public ICommand SwitchXPathModeCommand { get; }
 
-    public ObservableCollection<DetailGroupViewModel> SelectedItemDetails => SelectedItemInTree?.ItemDetails;
+    public ObservableCollection<DetailGroupViewModel> SelectedItemDetails => this.SelectedItemInTree?.ItemDetails;
 
     public ElementViewModel SelectedItemInTree
     {
@@ -153,33 +153,33 @@ public class MainViewModel : ObservableObject
 
     public void Initialize(AutomationType selectedAutomationType)
     {
-        SelectedAutomationType = selectedAutomationType;
-        IsInitialized = true;
+        this.SelectedAutomationType = selectedAutomationType;
+        this.IsInitialized = true;
 
         _automation = selectedAutomationType == AutomationType.UIA2 ? new UIA2Automation() : new UIA3Automation();
         _rootElement = _automation.GetDesktop();
-        var desktopViewModel = new ElementViewModel(_rootElement, this);
-        desktopViewModel.SelectionChanged += DesktopViewModel_SelectionChanged;
+        ElementViewModel desktopViewModel = new(_rootElement, this);
+        desktopViewModel.SelectionChanged += this.DesktopViewModel_SelectionChanged;
         desktopViewModel.LoadChildren(false);
-        Elements.Add(desktopViewModel);
-        Elements[0].IsExpanded = true;
+        this.Elements.Add(desktopViewModel);
+        this.Elements[0].IsExpanded = true;
 
         // Initialize TreeWalker
         _treeWalker = _automation.TreeWalkerFactory.GetControlViewWalker();
 
         // Initialize hover
         _hoverMode = new HoverMode(_automation);
-        _hoverMode.ElementHovered += ElementToSelectChanged;
+        _hoverMode.ElementHovered += this.ElementToSelectChanged;
 
         // Initialize focus tracking
         _focusTrackingMode = new FocusTrackingMode(_automation);
-        _focusTrackingMode.ElementFocused += ElementToSelectChanged;
+        _focusTrackingMode.ElementFocused += this.ElementToSelectChanged;
     }
 
     private void ElementToSelectChanged(AutomationElement obj)
     {
         // Build a stack from the root to the hovered item
-        Stack<AutomationElement> pathToRoot = new Stack<AutomationElement>();
+        var pathToRoot = new Stack<AutomationElement>();
         while (obj != null)
         {
             // Break on circular relationship (should not happen?)
@@ -201,23 +201,23 @@ public class MainViewModel : ObservableObject
         }
 
         // Expand the root element if needed
-        if (!Elements[0].IsExpanded)
+        if (!this.Elements[0].IsExpanded)
         {
-            Elements[0].IsExpanded = true;
+            this.Elements[0].IsExpanded = true;
             Thread.Sleep(1000);
         }
 
-        ElementViewModel elementVm = Elements[0];
+        ElementViewModel elementVm = this.Elements[0];
         while (pathToRoot.Count > 0)
         {
             AutomationElement elementOnPath = pathToRoot.Pop();
-            ElementViewModel nextElementVm = FindElement(elementVm, elementOnPath);
+            ElementViewModel nextElementVm = this.FindElement(elementVm, elementOnPath);
             if (nextElementVm == null)
             {
                 // Could not find next element, try reloading the parent
                 elementVm.LoadChildren(true);
                 // Now search again
-                nextElementVm = FindElement(elementVm, elementOnPath);
+                nextElementVm = this.FindElement(elementVm, elementOnPath);
                 if (nextElementVm == null)
                 {
                     // The next element is still not found, exit the loop
@@ -242,13 +242,13 @@ public class MainViewModel : ObservableObject
 
     private void DesktopViewModel_SelectionChanged(ElementViewModel obj)
     {
-        SelectedItemInTree = obj;
-        this.OnPropertyChanged(() => SelectedItemDetails);
+        this.SelectedItemInTree = obj;
+        this.OnPropertyChanged(() => this.SelectedItemDetails);
     }
 
     private void RefreshTree()
     {
-        Elements.Clear();
-        Initialize(SelectedAutomationType);
+        this.Elements.Clear();
+        this.Initialize(this.SelectedAutomationType);
     }
 }

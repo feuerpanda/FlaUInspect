@@ -7,8 +7,8 @@ public class DetailGroupViewModel : ObservableObject
 {
     public DetailGroupViewModel(string name, IEnumerable<IDetailViewModel> details)
     {
-        Name = name;
-        Details = new ExtendedObservableCollection<IDetailViewModel>(details);
+        this.Name = name;
+        this.Details = new ExtendedObservableCollection<IDetailViewModel>(details);
     }
 
     public string Name

@@ -25,7 +25,7 @@ public class FocusTrackingMode
     {
         // Might give problems because inspect is registered as well.
         // MS recommends to call UIA commands on a thread outside of an UI thread.
-        Task.Factory.StartNew(() => _eventHandler = _automation.RegisterFocusChangedEvent(OnFocusChanged));
+        Task.Factory.StartNew(() => _eventHandler = _automation.RegisterFocusChangedEvent(this.OnFocusChanged));
     }
 
     public void Stop()

@@ -23,7 +23,7 @@ public class ExtendedObservableCollection<T> : ObservableCollection<T>
 
     public void AddRange(IEnumerable<T> range)
     {
-        IList<T> rangeList = range as IList<T> ?? range.ToList();
+        var rangeList = range as IList<T> ?? range.ToList();
         if (rangeList.Count == 0)
         {
             return;
@@ -84,6 +84,6 @@ public class ExtendedObservableCollection<T> : ObservableCollection<T>
     public void Reset(IEnumerable<T> range)
     {
         this.ClearItems();
-        AddRange(range);
+        this.AddRange(range);
     }
 }

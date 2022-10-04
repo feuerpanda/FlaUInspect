@@ -22,7 +22,7 @@ public class HoverMode
     {
         _automation = automation;
         _dispatcherTimer = new DispatcherTimer();
-        _dispatcherTimer.Tick += DispatcherTimerTick;
+        _dispatcherTimer.Tick += this.DispatcherTimerTick;
         _dispatcherTimer.Interval = TimeSpan.FromMilliseconds(500);
     }
 

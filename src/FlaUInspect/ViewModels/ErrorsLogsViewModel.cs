@@ -10,23 +10,23 @@ public class ErrorsLogsViewModel
 {
     public ObservableCollection<ErrorLog> Logs { get; } = new();
 
-    public ICommand ClearCommand => new RelayCommand(_ => Clear());
+    public ICommand ClearCommand => new RelayCommand(_ => this.Clear());
 
     public void Log(Exception exception, [CallerMemberName] string callerMethodOrPropertyName = "")
     {
-        Logs.Insert(0, new ErrorLog(callerMethodOrPropertyName, exception));
+        this.Logs.Insert(0, new ErrorLog(callerMethodOrPropertyName, exception));
     }
 
     public void Clear()
     {
-        Logs.Clear();
+        this.Logs.Clear();
     }
 
     #region Singleton
 
     private static ErrorsLogsViewModel instance;
 
-    public static ErrorsLogsViewModel Instance => instance ?? (instance = new ErrorsLogsViewModel());
+    public static ErrorsLogsViewModel Instance => ErrorsLogsViewModel.instance ?? (ErrorsLogsViewModel.instance = new ErrorsLogsViewModel());
 
     private ErrorsLogsViewModel()
     {

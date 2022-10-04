@@ -14,8 +14,8 @@ public class DetailViewModel : ObservableObject, IDetailViewModel
 {
     public DetailViewModel(string key, string value)
     {
-        Key = key;
-        Value = value;
+        this.Key = key;
+        this.Value = value;
     }
 
     public string Key

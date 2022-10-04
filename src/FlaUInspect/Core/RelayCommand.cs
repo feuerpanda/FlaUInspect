@@ -14,7 +14,7 @@ public class RelayCommand : ICommand
     private readonly Action<object> _methodToExecute;
 
     public RelayCommand(Action<object> methodToExecute)
-    : this(methodToExecute, null)
+        : this(methodToExecute, null)
     {
     }
 
